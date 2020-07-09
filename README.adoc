@@ -1,0 +1,51 @@
+= Codename One CEF Support
+
+This project is a preview that allows you to use CEF (Chromium Embedded Framework) in the Codename One Simulator, instead of the old JavaFX.  CEF will then be used for the BrowserComponent and AV playback.
+
+
+Eventually we hope to transition entirely away from JavaFX in favor of CEF, but we start here with this preview.
+
+== Status
+
+. Mac OS supported only.  Windows and Linux will follow shortly.
+
+== Known issues
+
+. No proprietary codecs (.h264) are currently supported.  This will be added soon.
+. Media from InputStreams and local file system don't work.  Only http and http URLs.  https://magpcss.org/ceforum/viewtopic.php?f=17&t=17715[We're working on this].
+
+== Installation
+
+[source,bash]
+----
+git clone https://github.com/shannah/codenameone-cef
+cd codenameone-cef
+sh install-mac.sh
+----
+
+This will install CEF in ~/.codenameone/cef.   The Codename One simulator will check there the next time it runs, and will opt to use CEF instead of JavaFX if it finds it.
+
+== Building From Source
+
+
+**On Mac**
+
+Requirements:
+
+1. JDK8 or higher
+2. ant on your PATH
+3. Xcode command-line tools installed
+
+[source,bash]
+----
+sh build-mac.sh
+----
+
+This will check out the a https://github.com/shannah/java-cef[java-cef fork] that we maintain for CN1 support, and build it using xcodebuild.
+
+== Links
+
+. https://www.codenameone.com[Codename One Website]
+. https://github.com/shannah/java-cef[The Java-CEF fork we use]
+. https://github.com/chromiumembedded/java-cef[Java-CEF website]
+
