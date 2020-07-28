@@ -12,15 +12,30 @@ Eventually we hope to transition entirely away from JavaFX in favor of CEF, but 
 == Known issues
 
 . No proprietary codecs (.h264) are currently supported.  This will be added soon.
-. Media from InputStreams and local file system don't work.  Only http and http URLs.  https://magpcss.org/ceforum/viewtopic.php?f=17&t=17715[We're working on this].
 
 == Installation
+
+=== Mac OS
 
 [source,bash]
 ----
 git clone https://github.com/shannah/codenameone-cef
 cd codenameone-cef
 sh install-mac.sh
+----
+
+This will install CEF in ~/.codenameone/cef.   The Codename One simulator will check there the next time it runs, and will opt to use CEF instead of JavaFX if it finds it.
+
+
+== Windows 64
+
+Run the following in bash.  I'm using git bash, but cygwin will probably work too.
+
+[source,bash]
+----
+git clone https://github.com/shannah/codenameone-cef
+cd codenameone-cef
+sh install-win64.sh
 ----
 
 This will install CEF in ~/.codenameone/cef.   The Codename One simulator will check there the next time it runs, and will opt to use CEF instead of JavaFX if it finds it.
@@ -42,6 +57,24 @@ sh build-mac.sh
 ----
 
 This will check out the a https://github.com/shannah/java-cef[java-cef fork] that we maintain for CN1 support, and build it using xcodebuild.
+
+**On Windows**
+
+Requirements:
+
+1. JDK8 or higher
+2. ant on your PATH
+3. Visual Studio 2015 with Visual Studio C++ Tools installed
+4. MSBuild 2015 installed
+5. CMake version 2.8.12.2 or newer.
+6. Python version 2.6+ or 3+.
+
+[source,bash]
+----
+sh build-win64.sh
+----
+
+This will check out the a https://github.com/shannah/java-cef[java-cef fork] that we maintain for CN1 support, and build it.
 
 == Links
 
