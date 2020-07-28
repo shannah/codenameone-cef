@@ -7,7 +7,7 @@ Eventually we hope to transition entirely away from JavaFX in favor of CEF, but 
 
 == Status
 
-. Mac OS supported only.  Windows and Linux will follow shortly.
+. Mac OS and Win64 only.  Win32, Linux32, and Linux64 support should be available soon.
 
 == Known issues
 
