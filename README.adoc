@@ -7,7 +7,7 @@ Eventually we hope to transition entirely away from JavaFX in favor of CEF, but 
 
 == Status
 
-. Mac OS and Win64 only.  Win32, Linux32, and Linux64 support should be available soon.
+. Mac OS and Windows only.  Linux support should be available soon.
 
 == Known issues
 
@@ -27,7 +27,9 @@ sh install-mac.sh
 This will install CEF in ~/.codenameone/cef.   The Codename One simulator will check there the next time it runs, and will opt to use CEF instead of JavaFX if it finds it.
 
 
-== Windows 64
+=== Windows
+
+==== 64-bit
 
 Run the following in bash.  I'm using git bash, but cygwin will probably work too.
 
@@ -39,6 +41,22 @@ sh install-win64.sh
 ----
 
 This will install CEF in ~/.codenameone/cef.   The Codename One simulator will check there the next time it runs, and will opt to use CEF instead of JavaFX if it finds it.
+
+==== 32-bit
+
+Run the following in bash.  I'm using git bash, but cygwin will probably work too.
+
+[source,bash]
+----
+git clone https://github.com/shannah/codenameone-cef
+cd codenameone-cef
+sh install-win32.sh
+----
+
+This will install CEF in ~/.codenameone/cef.   The Codename One simulator will check there the next time it runs, and will opt to use CEF instead of JavaFX if it finds it.
+
+
+NOTE: You can install both win32 and win64.  The installer scripts will check to make sure the versions match, and will just copy the native files if cef is already installed.
 
 == Building From Source
 
@@ -75,6 +93,11 @@ sh build-win64.sh
 ----
 
 This will check out the a https://github.com/shannah/java-cef[java-cef fork] that we maintain for CN1 support, and build it.
+
+To build for win32, first set the `$JAVA_HOME_X86` environment variable to the path to your 32-bit JDK, then run `sh build-win32.sh`.
+
+NOTE:  If building both win64 and win32, you will need to delete the "java-cef" directory after buildingn one and before building the other.  (Or at least clear out the build files in it).
+
 
 == Links
 
