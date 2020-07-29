@@ -7,7 +7,7 @@ Eventually we hope to transition entirely away from JavaFX in favor of CEF, but 
 
 == Status
 
-. Mac OS and Windows only.  Linux support should be available soon.
+. Mac OS, Windows (x86 and x86_64), and Linux (x86_64) supported
 
 == Known issues
 
@@ -58,6 +58,22 @@ This will install CEF in ~/.codenameone/cef.   The Codename One simulator will c
 
 NOTE: You can install both win32 and win64.  The installer scripts will check to make sure the versions match, and will just copy the native files if cef is already installed.
 
+=== Linux
+
+NOTE: Currently only x86_64 architecture supported
+
+Run the following in bash.  I'm using git bash, but cygwin will probably work too.
+
+[source,bash]
+----
+git clone https://github.com/shannah/codenameone-cef
+cd codenameone-cef
+sh install-linux.sh
+----
+
+This will install CEF in ~/.codenameone/cef.   The Codename One simulator will check there the next time it runs, and will opt to use CEF instead of JavaFX if it finds it.
+
+
 == Building From Source
 
 
@@ -97,6 +113,22 @@ This will check out the a https://github.com/shannah/java-cef[java-cef fork] tha
 To build for win32, first set the `$JAVA_HOME_X86` environment variable to the path to your 32-bit JDK, then run `sh build-win32.sh`.
 
 NOTE:  If building both win64 and win32, you will need to delete the "java-cef" directory after buildingn one and before building the other.  (Or at least clear out the build files in it).
+
+**On Linux**
+
+Requirements:
+
+. CMake version 2.8.12.2 or newer.
+. Git.
+. Java version 7 to 14.
+. Python version 2.6+ or 3+.
+
+[source,bash]
+----
+sh build-linux.sh
+----
+
+This will check out the a https://github.com/shannah/java-cef[java-cef fork] that we maintain for CN1 support, and build it.
 
 
 == Links
