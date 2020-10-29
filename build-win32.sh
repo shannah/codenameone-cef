@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 if [ -z "$JAVA_HOME_X86" ]; then
-    JAVA_HOME_X86="/c/"Program Files (x86)"/AdoptOpenJDK/jdk8u262-b10"
+    JAVA_HOME_X86="/c/Program Files (x86)/AdoptOpenJDK/jdk8u262-b10"
 fi
 export JAVA_HOME="$JAVA_HOME_X86"
 export PATH="$JAVA_HOME"/bin:$PATH
