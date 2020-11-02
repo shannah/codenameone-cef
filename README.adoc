@@ -124,7 +124,7 @@ FILENAME=cef_binary_84.4.1+gfdc7504+chromium-84.0.4147.105_macosx64
 FILEID=1YWWJT6ng1T6LAc-zztmWs3bsUTNcjyLP
 ----
 5. Update the java-cef/src/CMakeLists.txt file, if necessary to match the version of cef_binary that you built.
-
+6. Run `sh build-mac.sh clean` again
 
 === On Windows
 
