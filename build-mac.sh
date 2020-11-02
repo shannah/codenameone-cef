@@ -16,6 +16,17 @@ fi
 if [ ! -d jcef_build ]; then
 	mkdir jcef_build
 fi
+cd third_party/cef
+FILENAME=cef_binary_84.4.1+gfdc7504+chromium-84.0.4147.105_macosx64
+FILEID=1YWWJT6ng1T6LAc-zztmWs3bsUTNcjyLP
+if [[ ! -d "$FILENAME" ]]; then
+	if [[ ! -f "$FILENAME.zip" ]]; then
+		sh $SCRIPTPATH/gdrive-download.sh "$FILEID" "$FILENAME.zip"
+	fi
+	unzip "$FILENAME.zip"
+fi
+
+cd ../..
 cd jcef_build
 
 cmake -G "Xcode" -DPROJECT_ARCH="x86_64" ..
