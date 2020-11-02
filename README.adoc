@@ -26,7 +26,6 @@ sh install-mac.sh
 
 This will install CEF in ~/.codenameone/cef.   The Codename One simulator will check there the next time it runs, and will opt to use CEF instead of JavaFX if it finds it.
 
-
 === Windows
 
 ==== 64-bit
@@ -77,7 +76,7 @@ This will install CEF in ~/.codenameone/cef.   The Codename One simulator will c
 == Building From Source
 
 
-**On Mac**
+=== On Mac
 
 Requirements:
 
@@ -92,7 +91,42 @@ sh build-mac.sh
 
 This will check out the a https://github.com/shannah/java-cef[java-cef fork] that we maintain for CN1 support, and build it using xcodebuild.
 
-**On Windows**
+==== Building CEF with Proprietary Codecs
+
+Default JCEF builds don't have proprietary codec support (e.g. h.264), so, if you need to update CEF (not JCEF, but CEF itself), you'll need to build it from source.  The `build-mac.sh` script is currently set to download a prebuilt cef binary from google drive that has been built with proprietary codec support.  The process for updating CEF is roughly as follows:
+
+1. Follow changes in the https://github.com/chromiumembedded/java-cef/[upstream java-cef repository] to identify changes that we may wish to apply to the https://github.com/shannah/java-cef/[Codename One fork of java-cef].  Specifically, look for the `CEF_VERSION` variable in the https://github.com/chromiumembedded/java-cef/blob/master/CMakeLists.txt[CMakeLists.txt] file:
++
+[source,make]
+----
+set(CEF_VERSION "84.3.8+gc8a556f+chromium-84.0.4147.105")
+----
++
+2. Follow the https://bitbucket.org/chromiumembedded/cef/wiki/BranchesAndBuilding[CEF instructions for building from source].  See "Building From Source" > "Automated Method".
++
+The "update.sh" script from https://bitbucket.org/chromiumembedded/cef/wiki/MasterBuildQuickStart.md[the build instructions] should be:
++
+[source,bash]
+----
+#!/bin/bash
+export CEF_USE_GN=1
+export GN_DEFINES="is_official_build=true proprietary_codecs=true ffmpeg_branding=Chrome"
+python ../automate/automate-git.py --download-dir=/Users/shannah/code/chromium_git --depot-tools-dir=/Users/shannah/code/depot_tools --force-distrib --force-build --force-update --x64-build --branch=4147
+----
++
+The `--branch` directive in the above snippet should be the branch referenced in the `CEF_VERSION` variable of the CMakeLists.txt above.  In the example above, the branch is 4147.
+3. Upload the resulting cef_binary_XXXX+chromium-XXXXX_macosx64.zip file to Google drive, and create a public link to it.
+4. Update the build-mac.sh script to point to the new cef_binary that you uploaded to Google drive.
++
+[source,bash]
+----
+FILENAME=cef_binary_84.4.1+gfdc7504+chromium-84.0.4147.105_macosx64
+FILEID=1YWWJT6ng1T6LAc-zztmWs3bsUTNcjyLP
+----
+5. Update the java-cef/src/CMakeLists.txt file, if necessary to match the version of cef_binary that you built.
+
+
+=== On Windows
 
 Requirements:
 
@@ -114,7 +148,7 @@ To build for win32, first set the `$JAVA_HOME_X86` environment variable to the p
 
 NOTE:  If building both win64 and win32, you will need to delete the "java-cef" directory after buildingn one and before building the other.  (Or at least clear out the build files in it).
 
-**On Linux**
+=== On Linux
 
 Requirements:
 
