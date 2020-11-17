@@ -188,6 +188,18 @@ Copy this file into the `java-cef/src/third_party/cef` directory and extract it.
 
 At this point, if the build worked, you should have a new zip file with this updated build inside the dist directory.
 
+== Known Issues
+
+=== Linux
+
+==== UnsatisfiedLinkException (libjcef.so: libjawt.so)
+
+On Ubuntu 20, and some other versions of Linux, it has been reported that, when running the Codename One simulator with CEF installed, you get `UnsatisfiedLinkException` mentioning that `libjcef.so` could not find `libjawt.so`.  This is caused because the `lib` directory of the JDK is not in the `LD_LIBRARY_PATH`.  You an work around this problem by adding it.  E.g.
+
+[source,bash]
+----
+export LD_LIBRARY_PATH=$JAVA_HOME/lib/amd64
+----
 
 == Links
 
