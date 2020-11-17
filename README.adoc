@@ -164,6 +164,30 @@ sh build-linux.sh
 
 This will check out the a https://github.com/shannah/java-cef[java-cef fork] that we maintain for CN1 support, and build it.
 
+==== Building CEF with Proprietary Codecs
+
+If you need to update CEF (not JCEF, but CEF), then you can't just use an official build because we require proprietary codec support (h.264, etc.)  To build CEF on linux, the best way that I've found is to use the https://github.com/sealemar/cef-dockerized[cef-dockerized] project which uses docker to build with all required dependencies.  
+
+1. Checkout the repo
+2. Update the cef/script/set_env.sh file so that the `GN_DEFINES` variable is:
++
+[source,bash]
+----
+export GN_DEFINES="is_official_build=true use_sysroot=true use_allocator=none symbol_level=1 enable_nacl=false use_cups=false proprietary_codecs=true ffmpeg_branding=Chrome"
+----
+3. Add `--branch=4147` to the `extra_automate_args` environment variable.  Though this will be different if you need to build a different branch.
+3. Run the command `cef_arch=x64 docker-compose run --rm cef`
++
+This will take a while.  Probably about a day.
+4. When it is finished, you will find a .7z file in the cef/output directory.  It's huge (like 8 gigs).  Extract this file.
+5. After the file is finished extracting you'll find the zip archive for CEF that we can use for building jcef at `chromium_git/chromium/src/cef/binary_distrib/cef_binary_84.4.1+gfdc7504+chromium-84.0.4147.105_linux64.zip`
++
+Copy this file into the `java-cef/src/third_party/cef` directory and extract it.
+6. Update the `CEF_VERSION` environment variable in the build-linux.sh script to match the version in the cef_binary you just extracted.  In the example above, the version would be `cef_binary_84.4.1+gfdc7504+chromium-84.0.4147.105`.
+7. Run `bash build-linux.sh`
+
+At this point, if the build worked, you should have a new zip file with this updated build inside the dist directory.
+
 
 == Links
 
