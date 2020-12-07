@@ -190,7 +190,7 @@ if ($false){ #Sample 65 overrides
 Key things to note about these contents:
 +
 .. The branch (`$VAR_CHROME_BRANCH`) is set to "4147".  This is chosen to correspond to the branch that is set up in the jcef project.  It must be the same.  See the CEF_VERSION default value in the https://github.com/shannah/java-cef/blob/master/CMakeLists.txt#L126[CMakeLists.txt] in the https://github.com/shannah/java-cef[java-cef fork] repo to see the exact branch number that is required.
-.. `$VAR_GYP_DEFINES="is_official_build=true proprietary_codecs=true ffmpeg_branding=Chrome";` - This is the magic sauce that makes it build with proprietary codec support.
+.. `$VAR_GN_DEFINES="is_official_build=true proprietary_codecs=true ffmpeg_branding=Chrome";` - This is the magic sauce that makes it build with proprietary codec support.
 .. `$VAR_CEF_BUILD_ONLY=$true;` - This tells it to build CEF only, and not try to build CEFSharp.  We don't need CEF sharp.  Just CEF.
 . Make sure Docker is installed, and it is set to use Windows containers.
 . Open Powershell and run `ps build.ps1`
