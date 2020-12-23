@@ -21,6 +21,23 @@ fi
 if [ ! -d jcef_build ]; then
 	mkdir jcef_build
 fi
+
+export CEF_VERSION=cef_binary_84.4.1+gfdc7504+chromium-84.0.4147.105
+
+cd third_party/cef
+FILENAME=${CEF_VERSION}_windows32
+#https://drive.google.com/file/d/1hcgGWXqNp6UZWO-yVfhugbJ6fecR4Gbh/view?usp=sharing
+FILEID=1hcgGWXqNp6UZWO-yVfhugbJ6fecR4Gbh
+if [[ ! -d "$FILENAME" ]]; then
+	if [[ ! -f "$FILENAME.zip" ]]; then
+	  echo "Downloading CEF binaries from gdrive..."
+		sh $SCRIPTPATH/gdrive-download.sh "$FILEID" "$FILENAME.zip"
+	fi
+	unzip "$FILENAME.zip"
+fi
+
+cd ../..
+
 cd jcef_build
 
 cmake -G "Visual Studio 14" ..

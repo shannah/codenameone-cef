@@ -148,6 +148,134 @@ To build for win32, first set the `$JAVA_HOME_X86` environment variable to the p
 
 NOTE:  If building both win64 and win32, you will need to delete the "java-cef" directory after buildingn one and before building the other.  (Or at least clear out the build files in it).
 
+==== Building CEF with Proprietary Codecs
+
+If you need to update CEF (not JCEF, but CEF), then you can't just use an official build because we require proprietary codec support (h.264, etc.)  To build CEF on linux, the best way that I've found is to use the https://github.com/sealemar/cef-dockerized[cef-dockerized] project which uses docker to build with all required dependencies.
+
+. Check out the https://github.com/mitchcapper/CefSharpDockerfiles[CefSharpDockerfiles] project from Github.
++
+[source,bash]
+----
+cd c:/
+git clone https://github.com/mitchcapper/CefSharpDockerfiles
+----
+. Rename  `versions_src.ps1` to `versions.ps1`
+. Modify `versions.ps1` to the following contents:
++
+[source,powershell]
+----
+$VAR_CHROME_BRANCH="4147";
+$VAR_CEFSHARP_VERSION="75.0.90";
+$VAR_CEFSHARP_BRANCH="cefsharp/75";
+$VAR_BASE_DOCKER_FILE="mcr.microsoft.com/windows/servercore:1809-amd64";#mcr.microsoft.com/windows/servercore:1903-amd64
+$VAR_DUAL_BUILD="0"; #set to 1 to build x86 and x64 together, mainly to speed up linking which is single threaded, note may need excess ram.
+$VAR_GN_DEFINES="is_official_build=true proprietary_codecs=true ffmpeg_branding=Chrome";
+$VAR_CEF_BUILD_MOUNT_VOL_NAME=""; #force using this volume for building, allows resuming MUST BE LOWER CASE
+$VAR_GN_ARGUMENTS="--ide=vs2019 --sln=cef --filters=//cef/*";
+$VAR_GYP_DEFINES="is_official_build=true proprietary_codecs=true ffmpeg_branding=Chrome";
+$VAR_CEF_BUILD_ONLY=$true;#Only build CEF do not build cefsharp or the cef-binary.
+$VAR_CEF_USE_BINARY_PATH=""; #If you want to use existing CEF binaries point this to a local folder where the cef_binary*.zip files are. It will skip the long CEF build step then but still must make the VS container for the cefsharp building.  Note will copy a dockerfile into this folder.
+$VAR_REMOVE_VOLUME_ON_SUCCESSFUL_BUILD=$true;
+$VAR_CEF_BINARY_EXT="zip"; #Can be zip,tar.bz2, 7z Generally do not change this off of Zip unless you are supplying your own binaries using $VAR_CEF_USE_BINARY_PATH above, and they have a different extension, will try to work with the other formats however
+$VAR_CEF_SAVE_SOURCES="0"; #normally sources are deleted before finishing the CEF build step.  Set to 1 to create a /code/sources.zip archive that has them (note it is left in docker image, must use docker cp to copy it out, it is also around 30GB).
+$VAR_CEF_VERSION_STR="auto"; #can set to "3.3239.1723" or similar if you have multiple binaries that Docker_cefsharp might find
+$VAR_HYPERV_MEMORY_ADD="--memory=30g"; #only matters if using HyperV, Note your swap file alone must be this big or able to grow to be this big, 30G is fairly safe for single build will need 60G for dual build.
+if ($false){ #Sample 65 overrides
+	$VAR_CHROME_BRANCH="3325";
+	$VAR_CEFSHARP_VERSION="65.0.90";
+	$VAR_CEFSHARP_BRANCH="master";
+}
+----
++
+Key things to note about these contents:
++
+.. The branch (`$VAR_CHROME_BRANCH`) is set to "4147".  This is chosen to correspond to the branch that is set up in the jcef project.  It must be the same.  See the CEF_VERSION default value in the https://github.com/shannah/java-cef/blob/master/CMakeLists.txt#L126[CMakeLists.txt] in the https://github.com/shannah/java-cef[java-cef fork] repo to see the exact branch number that is required.
+.. `$VAR_GN_DEFINES="is_official_build=true proprietary_codecs=true ffmpeg_branding=Chrome";` - This is the magic sauce that makes it build with proprietary codec support.
+.. `$VAR_CEF_BUILD_ONLY=$true;` - This tells it to build CEF only, and not try to build CEFSharp.  We don't need CEF sharp.  Just CEF.
+. Make sure Docker is installed, and it is set to use Windows containers.
+. Open Powershell and run `ps build.ps1`
+
+[IMPORTANT]
+=====
+. Turn off Windows Defender.  It will slow you down!
+. Compilation took me 3 days with a 6-core FX6300 3.5GHz running Windows 10, a 1TB SSD, and 24 GB of RAM.  Be prepared for it to take a long time.
+. The build seems to fail at the very last step for me (when it tries to zip everything up).  Don't fret.  The docker script creates an image with the state of the container after the build, so you can run this image afterwards and get the files out manually.
+=====
+
+**If the Build Fails...**
+
+If the build fails in the final step (zipping up all the files), as it did with me, you'll have to extract the files from the container manually.  Luckily the build script creates an image after the build which you can run in docker to extract the image files.  These are the steps I took:
+
+. Create a folder named "binaries" inside the CefSharpDockerfiles directory.  We'll mount this directory inside the docker container when we run it so that we can copy the binaries there.
+. Find out the Image ID that was created by docker.  Use `docker image` for this:
++
+[source,bash]
+----
+PS C:\CefSharpDockerfiles> docker images
+REPOSITORY                             TAG                 IMAGE ID            CREATED             SIZE
+cef                                    latest              3b772c1ec91a        13 hours ago        16.6GB
+i_cefbuild_srxnu                       latest              3b772c1ec91a        13 hours ago        16.6GB
+cef_build_env                          latest              9be99f7e48b3        3 days ago          14.8GB
+i_cefbuild_pdxas                       latest              ae02cd810c04        3 days ago          16.6GB
+<none>                                 <none>              d79aced55e48        5 days ago          14.8GB
+<none>                                 <none>              45a354c8b285        5 days ago          14.8GB
+vs                                     latest              d0a493e1a26e        5 days ago          13.9GB
+mcr.microsoft.com/windows/servercore   1809-amd64          2352228ff6bc        4 weeks ago         5.12GB
+----
++
+The most recent image ID will be the one that we want.  In this example it is `3b772c1ec91a`.  Run docker with that image:
++
+[source,bash]
+----
+PS C:\CefSharpDockerfiles> docker run -it --entrypoint cmd --mount 'type=bind,source="c:/CefSharpDockerfiles/binaries",target="c:/binaries"' 3b772c1ec91a
+----
++
+Some notes here:
++
+.. We use `--entrypoint cmd` to open the command prompt inside the docker container.
+.. The `--mount 'type=bind,source="c:/CefSharpDockerfiles/binaries",target="c:/binaries"'` bit mounts our `binaries` directory inside the docker container at `c:/binaries` so that we can copy files into it.
++
+When the command prompt opens inside the Docker container, you should find the binaries inside the `c:\code\binaries` directory:
++
+[source,cmd]
+----
+C:\code\binaries>dir
+ Volume in drive C has no label.
+ Volume Serial Number is E6CC-657A
+
+ Directory of C:\code\binaries
+
+12/02/2020  04:01 PM    <DIR>          .
+12/02/2020  04:01 PM    <DIR>          ..
+12/02/2020  03:54 PM        92,835,819 cef_binary_84.4.1+gfdc7504+chromium-84.0.4147.105_windows32.zip
+12/02/2020  03:57 PM       528,607,702 cef_binary_84.4.1+gfdc7504+chromium-84.0.4147.105_windows32_release_symbols.zip
+12/02/2020  03:58 PM        96,928,126 cef_binary_84.4.1+gfdc7504+chromium-84.0.4147.105_windows64.zip
+12/02/2020  04:01 PM       519,176,166 cef_binary_84.4.1+gfdc7504+chromium-84.0.4147.105_windows64_release_symbols.zip
+               4 File(s)  1,237,547,813 bytes
+               2 Dir(s)  21,207,175,168 bytes free
+----
++
+Just copy these into `c:\binaries` using the `copy` command:
++
+[source,cmd]
+----
+C:\code\binaries>copy *.zip c:\binaries\
+cef_binary_84.4.1+gfdc7504+chromium-84.0.4147.105_windows32.zip
+cef_binary_84.4.1+gfdc7504+chromium-84.0.4147.105_windows32_release_symbols.zip
+cef_binary_84.4.1+gfdc7504+chromium-84.0.4147.105_windows64.zip
+cef_binary_84.4.1+gfdc7504+chromium-84.0.4147.105_windows64_release_symbols.zip
+        4 file(s) copied.
+----
+
+Currently, I'm storing the binaries in Google drive.  If you want to do it the same way, just upload them to Google Drive, and create a public link to them.  (Don't need the release_symbols files).
+
+Then update the `build-win32.sh` and `build-win64.sh` files to set the FILEID and FILENAME variables to point to the correct files in gdrive.
+
+That's all there is to it :)
+
+NOTE: You should delete the java-cef directory before running a new build so that it will download your new binaries fresh.
+
+
 === On Linux
 
 Requirements:
@@ -164,6 +292,42 @@ sh build-linux.sh
 
 This will check out the a https://github.com/shannah/java-cef[java-cef fork] that we maintain for CN1 support, and build it.
 
+==== Building CEF with Proprietary Codecs
+
+If you need to update CEF (not JCEF, but CEF), then you can't just use an official build because we require proprietary codec support (h.264, etc.)  To build CEF on linux, the best way that I've found is to use the https://github.com/sealemar/cef-dockerized[cef-dockerized] project which uses docker to build with all required dependencies.  
+
+1. Checkout https://github.com/shannah/java-cef[the repo]
+2. Update the cef/script/set_env.sh file so that the `GN_DEFINES` variable is:
++
+[source,bash]
+----
+export GN_DEFINES="is_official_build=true use_sysroot=true use_allocator=none symbol_level=1 enable_nacl=false use_cups=false proprietary_codecs=true ffmpeg_branding=Chrome"
+----
+3. Add `--branch=4147` to the `extra_automate_args` environment variable.  Though this will be different if you need to build a different branch.
+4. Run the command `cef_arch=x64 docker-compose run --rm cef`
++
+This will take a while.  Probably about a day.
+5. When it is finished, you will find a .7z file in the cef/output directory.  It's huge (like 8 gigs).  Extract this file.
+6. After the file is finished extracting you'll find the zip archive for CEF that we can use for building jcef at `chromium_git/chromium/src/cef/binary_distrib/cef_binary_84.4.1+gfdc7504+chromium-84.0.4147.105_linux64.zip`
++
+Copy this file into the `java-cef/src/third_party/cef` directory and extract it.
+7. Update the `CEF_VERSION` environment variable in the build-linux.sh script to match the version in the cef_binary you just extracted.  In the example above, the version would be `cef_binary_84.4.1+gfdc7504+chromium-84.0.4147.105`.
+8. Run `bash build-linux.sh`
+
+At this point, if the build worked, you should have a new zip file with this updated build inside the dist directory.
+
+== Known Issues
+
+=== Linux
+
+==== UnsatisfiedLinkException (libjcef.so: libjawt.so)
+
+On Ubuntu 20, and some other versions of Linux, it has been reported that, when running the Codename One simulator with CEF installed, you get `UnsatisfiedLinkException` mentioning that `libjcef.so` could not find `libjawt.so`.  This is caused because the `lib` directory of the JDK is not in the `LD_LIBRARY_PATH`.  You an work around this problem by adding it.  E.g.
+
+[source,bash]
+----
+export LD_LIBRARY_PATH=$JAVA_HOME/lib/amd64
+----
 
 == Links
 

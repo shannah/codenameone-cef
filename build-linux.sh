@@ -23,13 +23,31 @@ fi
 if [ ! -d jcef_build ]; then
 	mkdir jcef_build
 fi
-cd jcef_build
+
 if [ "$arch" = "32" ]; then
 	PROJECT_ARCH="x86"
 fi
 if [ "$arch" = "64" ]; then
 	PROJECT_ARCH="x86_64"
 fi
+
+#https://drive.google.com/file/d/1pX6F_FEWe3Lm577fZDVoN6fKmE3Lskn5/view?usp=sharing
+
+export CEF_VERSION=cef_binary_84.4.1+gfdc7504+chromium-84.0.4147.105
+
+cd third_party/cef
+FILENAME=${CEF_VERSION}_linux64
+FILEID=1pX6F_FEWe3Lm577fZDVoN6fKmE3Lskn5
+if [[ ! -d "$FILENAME" ]]; then
+	if [[ ! -f "$FILENAME.zip" ]]; then
+		sh $SCRIPTPATH/gdrive-download.sh "$FILEID" "$FILENAME.zip"
+	fi
+	unzip "$FILENAME.zip"
+fi
+
+cd ../..
+cd jcef_build
+
 cmake -G "Unix Makefiles" -DPROJECT_ARCH="$PROJECT_ARCH" -DCMAKE_BUILD_TYPE=Release ..
 make -j4
 

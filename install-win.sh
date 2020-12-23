@@ -7,7 +7,7 @@ if [ "$arch" != "64" ] && [ "$arch" != "32" ]; then
     exit 1
 fi
 if [ -d ~/.codenameone/cef/lib/win$arch ]; then
-    echo "~/.codenameone/cef/win$arch directory already exists.  Please move or remove it in order to install a new version"
+    echo "~/.codenameone/cef/lib/win$arch directory already exists.  Please move or remove it in order to install a new version"
     exit 1
 fi
 version=$(<version.txt)
