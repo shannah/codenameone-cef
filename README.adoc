@@ -316,6 +316,10 @@ Copy this file into the `java-cef/src/third_party/cef` directory and extract it.
 
 At this point, if the build worked, you should have a new zip file with this updated build inside the dist directory.
 
+== Desktop Build Bundling Instructions
+
+. https://bitbucket.org/chromiumembedded/java-cef/raw/304f3e3de03fb3aab5e8212c0f9c699503a55cb4/tools/distrib/macosx64/README.redistrib.txt[MacOS redistrib README]
+
 == Known Issues
 
 === Linux

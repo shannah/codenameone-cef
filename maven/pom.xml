@@ -1,13 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+	<modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.codenameone</groupId>
-  <artifactId>codenameone-cef</artifactId>
-  <version>84.4.1</version>
-  <packaging>pom</packaging>
-  <name>CodenameOne CEF</name>
-  
+	<groupId>com.codenameone</groupId>
+	<artifactId>codenameone-cef</artifactId>
+	<version>84.4.1</version>
+	<packaging>pom</packaging>
+	<name>CodenameOne CEF</name>
+	<url>https://github.com/shannah/codenameone-cef</url>
+	<description>Chromium Embedded Framework Packages for use with Codename One</description>
+
+
+	<licenses>
+		<license>
+			<name>GPL v2 With Classpath Exception</name>
+			<url>https://openjdk.java.net/legal/gplv2+ce.html</url>
+			<distribution>repo</distribution>
+			<comments>A business-friendly OSS license</comments>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<id>shannah</id>
+			<name>Steve Hannah</name>
+			<email>steve.hannah@codenameone.com</email>
+			<timezone>-8</timezone>
+		</developer>
+	</developers>
+
+	<scm>
+		<url>https://github.com/shannah/codenameone-cef</url>
+		<connection>scm:git:git@github.com:shannah/codenameone-cef.git</connection>
+	</scm>
+
   <properties>
 
   </properties>
@@ -60,6 +86,30 @@
 			  <cef.platform>mac</cef.platform>
 		  </properties>
 	  </profile>
+	  <profile>
+		  <id>sign-artifacts</id>
+		  <build>
+			  <plugins>
+				  <plugin>
+					  <groupId>org.apache.maven.plugins</groupId>
+					  <artifactId>maven-gpg-plugin</artifactId>
+					  <version>1.4</version>
+					  <executions>
+						  <execution>
+							  <id>sign-artifacts</id>
+							  <phase>verify</phase>
+							  <goals>
+								  <goal>sign</goal>
+							  </goals>
+							  <configuration>
+								  <passphrase>${gpg.passphrase}</passphrase>
+							  </configuration>
+						  </execution>
+					  </executions>
+				  </plugin>
+			  </plugins>
+		  </build>
+	  </profile>
   </profiles>
   <dependencies>
 	  <dependency>
@@ -73,6 +123,29 @@
   <build>
 	
     <plugins>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-antrun-plugin</artifactId>
+			<version>3.0.0</version>
+			<executions>
+				<execution>
+					<id>copy-jars</id>
+					<phase>generate-resources</phase>
+					<goals>
+						<goal>run</goal>
+					</goals>
+					<configuration>
+						<target>
+							<mkdir dir="${project.build.directory}"/>
+							<copy file="${project.basedir}/../dist/cef-linux64.zip" tofile="${project.build.directory}/${project.build.finalName}-linux64.zip" />
+							<copy file="${project.basedir}/../dist/cef-win64.zip" tofile="${project.build.directory}/${project.build.finalName}-win64.zip" />
+							<copy file="${project.basedir}/../dist/cef-win32.zip" tofile="${project.build.directory}/${project.build.finalName}-win32.zip" />
+							<copy file="${project.basedir}/../dist/cef-mac.zip" tofile="${project.build.directory}/${project.build.finalName}-mac.zip" />
+						</target>
+					</configuration>
+				</execution>
+			</executions>
+		</plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
@@ -80,29 +153,29 @@
         <executions>
           <execution>
             <id>attach-artifacts</id>
-            <phase>package</phase>
+            <phase>generate-resources</phase>
             <goals>
               <goal>attach-artifact</goal>
             </goals>
             <configuration>
               <artifacts>
                 <artifact>
-                  <file>${basedir}/../dist/cef-linux64.zip</file>
+                  <file>${project.build.directory}/${project.build.finalName}-linux64.zip</file>
                   <type>zip</type>
 				  <classifier>linux64</classifier>
                 </artifact>
                 <artifact>
-                  <file>${basedir}/../dist/cef-win64.zip</file>
+                  <file>${project.build.directory}/${project.build.finalName}-win64.zip</file>
                   <type>zip</type>
 				  <classifier>win64</classifier>
                 </artifact>
                 <artifact>
-                  <file>${basedir}/../dist/cef-win32.zip</file>
+                  <file>${project.build.directory}/${project.build.finalName}-win32.zip</file>
                   <type>zip</type>
 				  <classifier>win32</classifier>
                 </artifact>
                 <artifact>
-                  <file>${basedir}/../dist/cef-mac.zip</file>
+                  <file>${project.build.directory}/${project.build.finalName}-mac.zip</file>
                   <type>zip</type>
 				  <classifier>mac</classifier>
                 </artifact>
@@ -111,13 +184,14 @@
           </execution>
         </executions>
       </plugin>
+
     </plugins>
   </build>
-  <distributionManagement>
-      <repository>
-          <id>bintray-codenameone-codenameone</id>
-          <name>codenameone-codenameone</name>
-          <url>https://api.bintray.com/maven/codenameone/codenameone/codenameone-cef/;publish=1</url>
-      </repository>
-  </distributionManagement>
+	<distributionManagement>
+		<repository>
+			<id>nexus-staging</id>
+			<name>Nexus Release Repository</name>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+	</distributionManagement>
 </project>

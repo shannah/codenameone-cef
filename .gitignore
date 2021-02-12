@@ -2,3 +2,6 @@ build
 java-cef
 cookie
 .DS_Store
+target
+*.iml
+.idea
