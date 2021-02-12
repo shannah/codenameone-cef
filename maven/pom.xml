@@ -143,6 +143,7 @@
 		  <groupId>${project.groupId}</groupId>
 		  <artifactId>${project.artifactId}</artifactId>
 		  <version>${project.version}</version>
+          <!--<version>84.4.1</version>-->
 		  <classifier>${cef.platform}</classifier>
 		  <type>zip</type>
 	  </dependency>
