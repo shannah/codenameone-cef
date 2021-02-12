@@ -55,7 +55,7 @@
 		  <id>win32</id>
 		  <activation>
 		    <os>
-		      <family>windows</family>
+		      <family>Windows</family>
 		      <arch>x86</arch>
 		    </os>
 		  </activation>
@@ -64,12 +64,39 @@
 		  </properties>
 	  </profile>
 	  <profile>
-		  <id>win64</id>
+		  <id>winx86_64</id>
 		  <activation>
 		    <os>
-		      <family>windows</family>
+		      <family>Windows</family>
 		      <arch>x86_64</arch>
 		    </os>
+
+		  </activation>
+		  <properties>
+			  <cef.platform>win64</cef.platform>
+		  </properties>
+	  </profile>
+	  <profile>
+		  <id>winx64</id>
+		  <activation>
+			  <os>
+				  <family>Windows</family>
+				  <arch>x64</arch>
+			  </os>
+
+		  </activation>
+		  <properties>
+			  <cef.platform>win64</cef.platform>
+		  </properties>
+	  </profile>
+	  <profile>
+		  <id>winamd64</id>
+		  <activation>
+			  <os>
+				  <family>Windows</family>
+				  <arch>amd64</arch>
+			  </os>
+
 		  </activation>
 		  <properties>
 			  <cef.platform>win64</cef.platform>
