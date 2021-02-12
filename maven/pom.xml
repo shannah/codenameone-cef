@@ -4,7 +4,7 @@
 
 	<groupId>com.codenameone</groupId>
 	<artifactId>codenameone-cef</artifactId>
-	<version>84.4.1</version>
+	<version>84.4.1-M1</version>
 	<packaging>pom</packaging>
 	<name>CodenameOne CEF</name>
 	<url>https://github.com/shannah/codenameone-cef</url>
