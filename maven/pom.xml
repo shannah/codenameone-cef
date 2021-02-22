@@ -4,7 +4,7 @@
 
 	<groupId>com.codenameone</groupId>
 	<artifactId>codenameone-cef</artifactId>
-	<version>84.4.1-M1</version>
+	<version>84.4.1-M2</version>
 	<packaging>pom</packaging>
 	<name>CodenameOne CEF</name>
 	<url>https://github.com/shannah/codenameone-cef</url>
@@ -40,12 +40,36 @@
 
   <profiles>
 	  <profile>
-		  <id>linux</id>
+		  <id>linux_x86_64</id>
 		  <activation>
 			  <os>
 			      <family>unix</family>
 			      <arch>x86_64</arch>
 			    </os>
+		  </activation>
+		  <properties>
+			  <cef.platform>linux64</cef.platform>
+		  </properties>
+	  </profile>
+	  <profile>
+		  <id>linux_x64</id>
+		  <activation>
+			  <os>
+				  <family>unix</family>
+				  <arch>x64</arch>
+			  </os>
+		  </activation>
+		  <properties>
+			  <cef.platform>linux64</cef.platform>
+		  </properties>
+	  </profile>
+	  <profile>
+		  <id>linux_amd64</id>
+		  <activation>
+			  <os>
+				  <family>unix</family>
+				  <arch>amd64</arch>
+			  </os>
 		  </activation>
 		  <properties>
 			  <cef.platform>linux64</cef.platform>
