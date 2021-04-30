@@ -84,6 +84,19 @@ Requirements:
 2. ant on your PATH
 3. Xcode command-line tools installed
 
+[sidebar]
+====
+**Codesigning And Notarization**
+
+Before running build-mac.sh, you may want to enable codesigning.
+Copy the _codesign-settings.sh.sample_ file to _codesign-settings.sh_
+and update the properties therein with your Apple credentials.
+
+Then it will perform codesigning and notarization.
+
+You can use the notarize-check.sh script to check the status of the notarization, which usually takes 5 to 10 minutes.
+====
+
 [source,bash]
 ----
 sh build-mac.sh

@@ -1,0 +1,18 @@
+# To perform Codesigning for Apple, copy this file to codesign-settings.sh
+# and modify the variables to match your requirements.
+CEF_CODESIGN_CERT="Developer ID Application: Acme Widgets Inc. (HRNMHCXYZ7)"
+
+# For Notarization, you need to create an app-specific password.
+# See https://support.apple.com/en-us/HT204397
+APPLE_USER="you@example.com"
+APPLE_PASSWORD="@keychain:AC_PASSWORD"
+
+#####################################################################
+##### DO NOT MODIFY BELOW THIS LINE UNLESS YOU KNOW WHAT YOU'RE DOING
+CODESIGN_OPTIONS="runtime"
+CN1_CODESIGN_ARGS=""
+CERT=""
+if [ ! -z "$CEF_CODESIGN_CERT" ]; then
+  CERT="$CEF_CODESIGN_CERT"
+fi
+ENTITLEMENTS="$SCRIPTPATH/mac-sandbox.entitlements"

@@ -5,3 +5,4 @@ cookie
 target
 *.iml
 .idea
+codesign-settings.sh
