@@ -4,7 +4,7 @@
 
 	<groupId>com.codenameone</groupId>
 	<artifactId>codenameone-cef</artifactId>
-	<version>84.4.1-M2</version>
+	<version>84.4.1-M3</version>
 	<packaging>pom</packaging>
 	<name>CodenameOne CEF</name>
 	<url>https://github.com/shannah/codenameone-cef</url>
@@ -161,17 +161,39 @@
 			  </plugins>
 		  </build>
 	  </profile>
+	  <profile>
+		  <id>bootstrap-deps</id>
+		  <activation>
+			  <property><name>bootstrap</name></property>
+		  </activation>
+		  <dependencies>
+			  <dependency>
+				  <groupId>${project.groupId}</groupId>
+				  <artifactId>${project.artifactId}</artifactId>
+				  <!--<version>${project.version}</version>-->
+				  <version>84.4.1</version>
+				  <classifier>${cef.platform}</classifier>
+				  <type>zip</type>
+			  </dependency>
+		  </dependencies>
+	  </profile>
+	  <profile>
+		  <id>no-bootstrap-deps</id>
+		  <activation><property><name>!bootstrap</name></property></activation>
+		  <dependencies>
+			  <dependency>
+				  <groupId>${project.groupId}</groupId>
+				  <artifactId>${project.artifactId}</artifactId>
+				  <version>${project.version}</version>
+				  <!--<version>84.4.1</version>-->
+				  <classifier>${cef.platform}</classifier>
+				  <type>zip</type>
+			  </dependency>
+		  </dependencies>
+	  </profile>
   </profiles>
-  <dependencies>
-	  <dependency>
-		  <groupId>${project.groupId}</groupId>
-		  <artifactId>${project.artifactId}</artifactId>
-		  <version>${project.version}</version>
-          <!--<version>84.4.1</version>-->
-		  <classifier>${cef.platform}</classifier>
-		  <type>zip</type>
-	  </dependency>
-  </dependencies>
+
+
   <build>
 	
     <plugins>
