@@ -11,7 +11,7 @@ Eventually we hope to transition entirely away from JavaFX in favor of CEF, but 
 
 == Known issues
 
-. No proprietary codecs (.h264) are currently supported.  This will be added soon.
+. <<linux-unsatisfied-link>>
 
 == Installation
 
@@ -337,6 +337,7 @@ At this point, if the build worked, you should have a new zip file with this upd
 
 === Linux
 
+[#linux-unstatistied-link]
 ==== UnsatisfiedLinkException (libjcef.so: libjawt.so)
 
 On Ubuntu 20, and some other versions of Linux, it has been reported that, when running the Codename One simulator with CEF installed, you get `UnsatisfiedLinkException` mentioning that `libjcef.so` could not find `libjawt.so`.  This is caused because the `lib` directory of the JDK is not in the `LD_LIBRARY_PATH`.  You an work around this problem by adding it.  E.g.
